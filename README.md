@@ -16,14 +16,19 @@ The above command will open a file if a valid one is found at the path, or it wi
 Commands are entered as the only text on their row. Enter the command and press enter.
 
 .  - Finish editing and, optionally, save. Then exit.
+
 !d - Display all text in the document
+
 !x - Delete line(s). If one number is entered, that line will be removed. 
          If two numbers separated by a space are entered, a range inclusive 
          of both numbers will be removed.
+
 !i - Insert line(s) after the first line number entered. A second number
          separated from the first by a space can be included to as a count
          of how many lines to insert.
+
 !# - Edit a line, where # is the line number. E.g. `> !23`
+
 !? - View this list of available commands
 
 ### Notes
