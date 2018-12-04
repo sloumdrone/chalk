@@ -1,0 +1,173 @@
+#!/usr/bin/env python3
+import sys
+import os
+import subprocess
+import re
+import readline
+
+
+class c:
+    black = ''
+    red = '\033[0;31m'
+    b_red = '\033[1;31m'
+    yellow = '\033[1;33m'
+    green = '\033[0;32m'
+    b_green = '\033[1;32m'
+    cyan = '\033[0;36m'
+    b_cyan = '\033[1;36m'
+    purple = '\033[1;35m'
+    blue = '\033[0;34m'
+    b_blue = '\033[1;34m'
+    white = '\033[1;37m'
+    end = '\033[0m'
+
+
+def validate_filename(filename):
+    if re.match(r'^[\w.\-]{1,100}', filename):
+        return True
+    return False
+
+
+def validate_path(path):
+    if not path[0] in ['.','~','/']:
+        path = './{}'.format(path)
+    temp = path.split('/')
+    temp.pop()
+    temp = '/'.join(temp)
+    loc = subprocess.run(['ls',temp], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    if loc.returncode > 0:
+        return False
+
+    if temp[-1] == '/':
+        temp = temp[:-1]
+    if filepath:
+        temp = temp + '/' + path.split('/')[-1]
+    return temp
+
+
+def chalk(path):
+    fn = path.split('/')[-1]
+    valid_fn = validate_filename(fn)
+
+    if not valid_fn:
+        print('Invalid filename')
+        sys.exit(2)
+
+    valid_path = validate_path(path)
+    if not valid_path:
+        print('Invalid path')
+        sys.exit(2)
+
+    header = "{:7}      5   10   15   20   25   30   35   40   45   50   55   60   65\n{:7}  ....|....|....|....|....|....|....|....|....|....|....|....|....|".format(' ',' ')
+
+    helptext = [
+        "",
+        "{}Commands are entered as the only entry for their row:{}".format(c.yellow, c.end),
+        "  . - Finish writing/exit, will prompt for save",
+        " !? - Print this help message",
+        " !d - Display the contents of the file",
+        " !# - Rewrite a line, # is replaced by line number e.g. !27",
+        " !x - Delete line(s), prompt will request line or range",
+        " !i - Insert line(s), prompt will request start point and optional quantity",
+        ""
+    ]
+
+    content = []
+
+    if os.path.exists(valid_path):
+        with open(valid_path,'r') as f:
+            content = f.read().split('\n')
+
+    print('\n   Chalk 0.8 by sloum')
+    print('\n{}   Writing:{} {}{}'.format(c.yellow, c.white, fn, c.end))
+    print("   For a command list, enter {}!?\n{}".format(c.green, c.end))
+    print(header)
+    while True:
+        ln = input('{:6} {}>{} '.format(len(content), c.yellow, c.end))
+        if ln == '.':
+            break
+        elif ln == '!?':
+            print('')
+            for x in helptext:
+                print('{:8} {}'.format(' ',x))
+            print('')
+            print(header)
+        elif ln == '!d':
+            print('')
+            for i, x in enumerate(content):
+                print('{:6} - {}{}{}'.format(i, c.green, x, c.end))
+            print('')
+            print(header)
+        elif ln == '!x':
+            print('\n{:8} {}Enter line to delete, for a range enter the start and\n{:8} end separated by a space. To cancel, enter -1.\n{:8} Deletion cannot be undone. Be careful.{}'.format(' ', c.cyan, ' ', ' ', c.end))
+            delete = input('{:6} {}>{} '.format(' ', c.b_red, c.end))
+            entry = delete.split(' ')
+            try:
+                beg = int(entry[0])
+                end = beg + 1
+                if len(entry) > 1:
+                    end = int(entry[1]) + 1
+                if beg < 0:
+                    continue
+                content = content[:beg] + content[end:]
+            except:
+                print('{}{:8} Invalid entry{}'.format(c.red, ' ', c.end))
+            print('')
+        elif ln == '!i':
+            print('\n{:8} {}Enter the line number that you want the new line(s) to\n{:8} appear after.To insert multiple lines enter the starting\n{:8} point and the number of lines separated by a space. To cancel, enter -1{}'.format(' ', c.cyan, ' ', ' ', c.end))
+            insert = input('{:6} {}>{} '.format(' ', c.b_green, c.end))
+            entry = insert.split(' ')
+            try:
+                beg = int(entry[0]) + 1
+                count = 1
+                if len(entry) > 1:
+                    count = int(entry[1])
+                if beg < 0 or count < 1:
+                    continue
+                while count > 0:
+                    content.insert(beg,'')
+                    count -= 1
+            except:
+                print('{}{:8} Invalid entry{}'.format(c.red, ' ', c.end))
+            print('')
+        elif re.match(r'^\!\d+$',ln):
+            try:
+                row = int(ln[1:])
+                print('{:8} {}Type !c to cancel line edit{}'.format(' ', c.yellow, c.end))
+                print('{:>6} : {}'.format('old', content[row]))
+                newln = input('{:6} {}>{} '.format(row, c.b_blue, c.end))
+                if newln == '!c':
+                    print('{:8} Cancelled...'.format(' '))
+                else:
+                    content[row] = newln
+            except:
+                print('{}{:8} Invalid entry!{}'.format(c.b_red, ' ', c.end))
+            print('')
+            print(header)
+        else:
+            content.append(ln)
+
+    confirmation = ''
+    while confirmation.lower() not in ['y','yes','n','no']:
+        confirmation = input('{}Save {}?{} (Y/n) '.format(c.b_green, fn, c.end))
+        if confirmation.lower()[0] == 'y':
+            print('{}saving...{}'.format(c.white, c.end))
+            text = '\n'.join(content)
+            try:
+                with open(valid_path, 'w') as f:
+                    f.write(text)
+                print('Done.\n')
+            except:
+                print('{}   You do not have permission to write to this file.{}'.format(c.red, c.end))
+        else:
+            print('{}exiting...{}\n'.format(c.white, c.end))
+
+
+if __name__ == '__main__':
+    args = sys.argv
+    if len(args) < 2:
+        print('Incorrect number of arguments.')
+        sys.exit(1)
+    filepath = args[1]
+    chalk(filepath)
