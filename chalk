@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+#
+# Chalk: A line mode text editor
+# by Brian Evans
+# You may copy or modify at will for profit or not so long
+# as any usage is attributed and it released with these same
+# provisions
+#_
+
 import sys
 import os
 import subprocess
