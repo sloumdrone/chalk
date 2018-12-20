@@ -22,6 +22,14 @@ class c:
     end = '\033[0m'
 
 
+def input_editable(prompt, prefill=''):
+    readline.set_startup_hook(lambda: readline.insert_text(prefill))
+    try:
+        return input(prompt)
+    finally:
+        readline.set_startup_hook()
+
+
 def validate_filename(filename):
     if re.match(r'^[\w.\-]{1,100}', filename):
         return True
@@ -115,7 +123,7 @@ def chalk(path):
                 print('{}{:8} Invalid entry{}'.format(c.red, ' ', c.end))
             print('')
         elif ln == '!i':
-            print('\n{:8} {}Enter the line number that you want the new line(s) to\n{:8} appear after.To insert multiple lines enter the starting\n{:8} point and the number of lines separated by a space. To cancel, enter -1{}'.format(' ', c.cyan, ' ', ' ', c.end))
+            print('\n{:8} {}Enter the line number that you want the new line(s) to\n{:8} appear after.To insert multiple lines enter the starting\n{:8} point and the number of lines separated by a space.\n{:8}To cancel, enter -1{}'.format(' ', c.cyan,' ', ' ', ' ', c.end))
             insert = input('{:6} {}>{} '.format(' ', c.b_green, c.end))
             entry = insert.split(' ')
             try:
@@ -134,9 +142,9 @@ def chalk(path):
         elif re.match(r'^\!\d+$',ln):
             try:
                 row = int(ln[1:])
-                print('{:8} {}Type !c to cancel line edit{}'.format(' ', c.yellow, c.end))
-                print('{:>6} : {}'.format('old', content[row]))
-                newln = input('{:6} {}>{} '.format(row, c.b_blue, c.end))
+                # print('{:8} {}Type !c to cancel line edit{}'.format(' ', c.yellow, c.end))
+                # print('{:>6} : {}'.format('old', content[row]))
+                newln = input_editable('{:6} {}>{} '.format(row, c.b_blue, c.end), content[row])
                 if newln == '!c':
                     print('{:8} Cancelled...'.format(' '))
                 else:
