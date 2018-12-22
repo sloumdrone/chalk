@@ -80,12 +80,14 @@ def chalk(path):
     helptext = [
         "",
         "{}Commands are entered as the only entry for their row:{}".format(c.yellow, c.end),
-        "  . - Finish writing/exit, will prompt for save",
-        " !? - Print this help message",
-        " !d - Display the contents of the file",
-        " !# - Rewrite a line, # is replaced by line number e.g. !27",
-        " !x - Delete line(s), prompt will request line or range",
-        " !i - Insert line(s), prompt will request start point and optional quantity",
+        "  {}.{} - Finish writing/exit, will prompt for save".format(c.b_green, c.end),
+        " {}!?{} - Print this help message".format(c.b_green, c.end),
+        " {}!d{} - Display the contents of the file".format(c.b_green, c.end),
+        " {}!v{} - View lines, prompt will request a range of lines".format(c.b_green, c.end),
+        " {}!#{} - Rewrite a line, # is replaced by line number e.g. !27".format(c.b_green, c.end),
+        " {}!x{} - Delete line(s), prompt will request line or range".format(c.b_green, c.end),
+        " {}!i{} - Insert line(s), prompt will request start point and optional quantity".format(c.b_green, c.end),
+        " {}!g{} - Print the ruler/guide".format(c.b_green, c.end),
         ""
     ]
 
@@ -107,6 +109,9 @@ def chalk(path):
             print('')
             for x in helptext:
                 print('{:8} {}'.format(' ',x))
+            print('')
+            print(header)
+        elif ln == '!g':
             print('')
             print(header)
         elif ln == '!d':
@@ -171,7 +176,7 @@ def chalk(path):
                     print(header)
 
             except:
-                print('{}{:8} Invalid entry{}'.format(c.red, c.end))
+                print('{}{:8} Invalid entry{}'.format(c.red, ' ', c.end))
         elif re.match(r'^\!\d+$',ln):
             try:
                 row = int(ln[1:])
