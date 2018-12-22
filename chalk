@@ -147,6 +147,31 @@ def chalk(path):
             except:
                 print('{}{:8} Invalid entry{}'.format(c.red, ' ', c.end))
             print('')
+        elif ln == '!v':
+            print('\n{:8} {}Enter the start & end, separated by a space, to indicate\n{:8} the range you wish to view. To cancel, enter: -1{}'.format(' ', c.cyan, ' ', c.end))
+            view = input('{:6} {}>{}'.format(' ', c.yellow, c.end))
+            entry = view.split(' ')
+            try:
+                beg = int(entry[0])
+                if beg < 0:
+                    continue
+
+                if len(entry) < 2 or beg > int(entry[1]):
+                    print('{}{:8} Invalid entry, must provide two numbers separated by a space{}'.format(c.red, ' ', c.end))
+                    continue
+                end = int(entry[1])
+                end = end if end < len(content) else len(content) - 1
+                if beg > end:
+                    print('{}{:8} Invalid entry, start position must be less than end position.{}'.format(c.red, ' ', c.end))
+                    continue
+                else:
+                    for x in range(beg, end + 1):
+                        print('{:6} - {}{}{}'.format(x, c.green, content[x], c.end))
+                    print('')
+                    print(header)
+
+            except:
+                print('{}{:8} Invalid entry{}'.format(c.red, c.end))
         elif re.match(r'^\!\d+$',ln):
             try:
                 row = int(ln[1:])
