@@ -180,8 +180,6 @@ def chalk(path):
         elif re.match(r'^\!\d+$',ln):
             try:
                 row = int(ln[1:])
-                # print('{:8} {}Type !c to cancel line edit{}'.format(' ', c.yellow, c.end))
-                # print('{:>6} : {}'.format('old', content[row]))
                 newln = input_editable('{:6} {}>{} '.format(row, c.b_blue, c.end), content[row])
                 if newln == '!c':
                     print('{:8} Cancelled...'.format(' '))
@@ -197,6 +195,10 @@ def chalk(path):
     confirmation = ''
     while confirmation.lower() not in ['y','yes','n','no']:
         confirmation = input('{}Save {}?{} (Y/n) '.format(c.b_green, fn, c.end))
+
+        if not len(confirmation):
+            continue
+
         if confirmation.lower()[0] == 'y':
             print('{}saving...{}'.format(c.white, c.end))
             text = '\n'.join(content)
