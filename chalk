@@ -202,6 +202,7 @@ def chalk(path):
         if confirmation.lower()[0] == 'y':
             print('{}saving...{}'.format(c.white, c.end))
             text = '\n'.join(content)
+            text += '\n'
             try:
                 with open(valid_path, 'w') as f:
                     f.write(text)
