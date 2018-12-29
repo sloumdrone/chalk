@@ -96,6 +96,8 @@ def chalk(path):
     if os.path.exists(valid_path):
         with open(valid_path,'r') as f:
             content = f.read().split('\n')
+            if content[-1] == '':
+                content.pop()
 
     print('\n   Chalk 0.8 by sloum')
     print('\n{}   Writing:{} {}{}'.format(c.yellow, c.white, fn, c.end))
