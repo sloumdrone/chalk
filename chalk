@@ -99,6 +99,8 @@ def chalk(path):
             if content[-1] == '':
                 content.pop()
 
+    edited_file = False
+
     print('\n   Chalk 0.8 by sloum')
     print('\n{}   Writing:{} {}{}'.format(c.yellow, c.white, fn, c.end))
     print("   For a command list, enter {}!?\n{}".format(c.green, c.end))
@@ -134,6 +136,7 @@ def chalk(path):
                 if beg < 0:
                     continue
                 content = content[:beg] + content[end:]
+                edited_file = True
             except:
                 print('{}{:8} Invalid entry{}'.format(c.red, ' ', c.end))
             print('')
@@ -151,6 +154,7 @@ def chalk(path):
                 while count > 0:
                     content.insert(beg,'')
                     count -= 1
+                edited_file = True
             except:
                 print('{}{:8} Invalid entry{}'.format(c.red, ' ', c.end))
             print('')
@@ -187,12 +191,19 @@ def chalk(path):
                     print('{:8} Cancelled...'.format(' '))
                 else:
                     content[row] = newln
+                    edited_file = True
             except:
                 print('{}{:8} Invalid entry!{}'.format(c.b_red, ' ', c.end))
             print('')
             print(header)
         else:
+            edited_file = True
             content.append(ln)
+            edited_file = True
+
+    if not edited_file:
+        print('{}exiting...{}\n'.format(c.white, c.end))
+        sys.exit(0)
 
     confirmation = ''
     while confirmation.lower() not in ['y','yes','n','no']:
@@ -209,10 +220,13 @@ def chalk(path):
                 with open(valid_path, 'w') as f:
                     f.write(text)
                 print('Done.\n')
+                sys.exit(0)
             except:
                 print('{}   You do not have permission to write to this file.{}'.format(c.red, c.end))
+                sys.exit(1)
         else:
             print('{}exiting...{}\n'.format(c.white, c.end))
+            sys.exit(0)
 
 
 if __name__ == '__main__':
